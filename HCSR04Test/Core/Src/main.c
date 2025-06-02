@@ -110,18 +110,18 @@ int main(void)
 
     HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET);
     // 延时10微秒，确保触发脉冲宽度
-    for(volatile uint32_t i=0; i<10; i++); // 简单延时，或用HAL_Delay/自定义us延时
+    for(uint32_t i =0; i<10; i++); // 简单延时，或用HAL_Delay/自定义us延时
     HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_RESET);
 
     uint8_t success = 0;
     uint32_t expireTime = HAL_GetTick() + 50; 
-    while(HAL_GetTick() < expireTime)
+    while(expireTime > HAL_GetTick())
     {
       uint32_t cc1Flag = __HAL_TIM_GET_FLAG(&htim1, TIM_FLAG_CC1);
       uint32_t cc2Flag = __HAL_TIM_GET_FLAG(&htim1, TIM_FLAG_CC2);
       if(cc1Flag && cc2Flag)
       {
-        success = 1;
+        success = 1; 
         break;
       }
     }
@@ -131,10 +131,9 @@ int main(void)
 
     if(success==1)
     {
-      uint32_t ccr1 = HAL_TIM_ReadCapturedValue(&htim1, TIM_CHANNEL_1);
-      uint32_t ccr2 = HAL_TIM_ReadCapturedValue(&htim1, TIM_CHANNEL_2);
-      uint32_t pulse = (ccr2 - ccr1);
-      float pulseWidth = pulse * 1e-6f; // 1MHz定时器，每个计数1us
+      uint32_t ccr1 = __HAL_TIM_GET_COMPARE(&htim1, TIM_CHANNEL_1);
+      uint32_t ccr2 = __HAL_TIM_GET_COMPARE(&htim1, TIM_CHANNEL_2);  
+      float pulseWidth = (ccr2 - ccr1) * 1e-6f; // 1MHz定时器，每个计数1us
       float distance = pulseWidth * 343.0f / 2.0f;
 
       if(distance < 0.2)
