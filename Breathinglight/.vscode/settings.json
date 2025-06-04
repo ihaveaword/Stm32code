@@ -16,12 +16,18 @@
             "label": "$(sync) connect",
             "task": "Start OpenOCD",
             "tooltip": "Run Flash Task"
+        },
+        {
+            "label": "$(trash) Erase",
+            "task": "Erase Flash",
+            "tooltip": "Erase Flash Memory"
         }
     ],
     "cortex-debug.variableUseNaturalFormat": true,
     "files.associations": {
         "*.mxproject": "plaintext",
-        "compare": "c"
+        "compare": "c",
+        "math.h": "c"
     },
      "gitlens.advanced.ignoreFileNames": [
         "*.mxproject"

@@ -22,9 +22,10 @@
 #include "tim.h"
 #include "gpio.h"
 
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "math.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -45,7 +46,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+volatile float duty = 0; // 添加为全局变量
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -94,6 +95,8 @@ int main(void)
   MX_GPIO_Init();
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
+  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+  HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_1);
 
   /* USER CODE END 2 */
 
@@ -101,6 +104,11 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+    float t = HAL_GetTick()*0.001; // Convert milliseconds to seconds
+    duty = 0.5*sin(2*3.14*t) + 0.5; // 赋值给全局变量
+    uint16_t arr = __HAL_TIM_GetAutoreload(&htim1);
+    uint16_t ccr = duty*(arr+1);
+    __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_1, ccr);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

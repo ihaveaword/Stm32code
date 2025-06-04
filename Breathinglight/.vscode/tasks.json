@@ -25,18 +25,36 @@
         {
             "label": "Flash with OpenOCD",
             "type": "shell",
-            "command": "openocd",
-            "args": [
-                "-f", "interface/stlink.cfg",
-                "-f", "target/stm32h7x.cfg",
-                "-c", "program ./build/car.elf verify reset exit"
-            ],
+            "command": "elf=$(find ${workspaceFolder}/build -name '*.elf' -type f | head -n 1); openocd -f interface/stlink.cfg -f target/stm32h7x.cfg -c \"init\" -c \"reset halt\" -c \"flash write_image erase $elf\" -c \"reset\" -c \"shutdown\"",
+            "options": {
+                "shell": {
+                    "executable": "/bin/zsh",
+                    "args": ["-l", "-c"]
+                }
+            },
             "group": {
                 "kind": "build",
                 "isDefault": true
             },
             "presentation": {
-                "reveal": "always"
+                "reveal": "always",
+                "panel": "new"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Erase Flash",
+            "type": "shell",
+            "command": "openocd -f interface/stlink.cfg -f target/stm32h7x.cfg -c \"init\" -c \"reset halt\" -c \"flash erase_sector 0 0 last\" -c \"reset\" -c \"shutdown\"",
+            "options": {
+                "shell": {
+                    "executable": "/bin/zsh",
+                    "args": ["-l", "-c"]
+                }
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
             },
             "problemMatcher": []
         }
